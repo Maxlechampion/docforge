@@ -668,10 +668,11 @@
        JAVASCRIPT
        ============================================================ -->
   <script>
-    // Configuration
-    const ORCHESTRATOR_URL = 'http://localhost:3000/generate';
+        // Configuration — détection automatique local vs production
+    const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const ORCHESTRATOR_URL = IS_LOCAL ? 'http://localhost:3000/generate' : '/generate';
+    const M1_UPLOAD_URL = IS_LOCAL ? 'http://localhost:3001/m1/upload' : '/m1/upload';
     const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 Mo
-
     // État
     const state = {
       selectedTemplate: 'consulting',
@@ -893,7 +894,7 @@ clearTimeout(timeoutId);
       const formData = new FormData();
       formData.append('file', file);
 
-      const m1Res = await fetch('http://localhost:3001/m1/upload', {
+      const m1Res = await fetch(M1_UPLOAD_URL, {
         method: 'POST',
         body: formData,
       });

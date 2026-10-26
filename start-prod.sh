@@ -3,38 +3,32 @@ set -e
 
 echo "🚀 Démarrage de DocForge AI en production..."
 
-# Lancer M1
-node modules/m1-ingestion/src/index.js &
+# IMPORTANT : on force les ports internes, on ignore PORT=10000 de Render
+# Seul Caddy utilisera le port 10000 fourni par Render
+
+PORT=3001 node modules/m1-ingestion/src/index.js &
 echo "  M1 Ingestion démarré (port 3001)"
 
-# Lancer M2
-node modules/m2-semantic-analysis/src/index.js &
+PORT=3002 node modules/m2-semantic-analysis/src/index.js &
 echo "  M2 Analyse démarré (port 3002)"
 
-# Lancer M3
-node modules/m3-reformulation/src/index.js &
+PORT=3003 node modules/m3-reformulation/src/index.js &
 echo "  M3 Reformulation démarré (port 3003)"
 
-# Lancer M4
-node modules/m4-design/src/index.js &
+PORT=3004 node modules/m4-design/src/index.js &
 echo "  M4 Design démarré (port 3004)"
 
-# Lancer M5
-node modules/m5-office-generation/src/index.js &
+PORT=3005 node modules/m5-office-generation/src/index.js &
 echo "  M5 Génération démarré (port 3005)"
 
-# Attendre que les ports soient prêts
 sleep 3
 
-# Lancer M0 (orchestrateur) — en dernier car il dépend des autres
-node modules/m0-orchestrator/src/index.js &
+PORT=3000 node modules/m0-orchestrator/src/index.js &
 echo "  M0 Orchestrateur démarré (port 3000)"
 
-# Attendre encore un peu
 sleep 2
 
-echo "✅ Tous les modules démarrés. Lancement de Caddy sur le port $PORT..."
-echo "   → Application accessible sur https://<ton-app>.onrender.com"
+echo "✅ Tous les modules démarrés. Lancement de Caddy sur le port ${PORT}..."
 
-# Lancer Caddy au premier plan (garde le conteneur en vie)
+# Caddy utilise le port fourni par Render (10000)
 exec caddy run --config ./Caddyfile --adapter caddyfile

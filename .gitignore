@@ -21,3 +21,8 @@ package.json.bak
 *.backup-*
 *.bak
 *.broken
+*.docx
+*.pdf
+*.xlsx
+*.pptx
+!demo-output.docx

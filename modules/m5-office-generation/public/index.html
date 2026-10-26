@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocForge AI — Générateur de documents professionnels</title>
+  <style>
+    /* ============================================================
+       RESET & BASE
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #1e40af;
+      --primary-dark: #1e3a8a;
+      --primary-light: #dbeafe;
+      --secondary: #64748b;
+      --accent: #0ea5e9;
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --success: #10b981;
+      --success-bg: #d1fae5;
+      --error: #ef4444;
+      --error-bg: #fee2e2;
+      --warning: #f59e0b;
+      --warning-bg: #fef3c7;
+      --radius: 10px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ============================================================
+       HEADER
+       ============================================================ */
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 24px 20px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .header-tagline {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    /* ============================================================
+       MAIN
+       ============================================================ */
+    main {
+      max-width: 900px;
+      margin: 32px auto;
+      padding: 0 20px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      padding: 28px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 20px;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* ============================================================
+       INPUTS
+       ============================================================ */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: white;
+      transition: all 0.15s;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    /* ============================================================
+       TABS (Texte / Fichier)
+       ============================================================ */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .tab {
+      padding: 10px 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-light);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.15s;
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .tab:hover:not(.active) {
+      color: var(--text);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ============================================================
+       DROPZONE
+       ============================================================ */
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: #fafbfc;
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .dropzone-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .dropzone-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .dropzone-hint {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .file-info {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--primary-dark);
+      font-weight: 500;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .file-info.visible { display: flex; }
+
+    .file-remove {
+      background: none;
+      border: none;
+      color: var(--error);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 0 8px;
+    }
+
+    /* ============================================================
+       TEMPLATES GRID
+       ============================================================ */
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .template-card {
+      padding: 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: white;
+      text-align: left;
+    }
+
+    .template-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .template-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .template-preview {
+      height: 40px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      color: white;
+      letter-spacing: 0.5px;
+    }
+
+    .template-name {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .template-desc {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    /* ============================================================
+       TOGGLE SWITCH
+       ============================================================ */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background: #fafbfc;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .toggle-info { flex: 1; }
+
+    .toggle-label {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .toggle-desc {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+      margin-left: 16px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 26px;
+      transition: 0.2s;
+    }
+
+    .slider::before {
+      content: '';
+      position: absolute;
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .switch input:checked + .slider { background: var(--primary); }
+    .switch input:checked + .slider::before { transform: translateX(22px); }
+
+    /* ============================================================
+       BUTTON
+       ============================================================ */
+    .btn-generate {
+      width: 100%;
+      padding: 18px 32px;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-lg);
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-generate:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.04);
+    }
+
+    .btn-generate:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    /* ============================================================
+       PROGRESS
+       ============================================================ */
+    .progress-box {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      background: var(--primary-light);
+      border-radius: var(--radius);
+    }
+
+    .progress-box.visible { display: block; }
+
+    .progress-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text-light);
+      padding: 8px 0;
+      transition: all 0.2s;
+    }
+
+    .progress-step.active { color: var(--primary); font-weight: 600; }
+    .progress-step.done { color: var(--success); }
+
+    .step-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: white;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .progress-step.active .step-icon {
+      background: var(--primary);
+      color: white;
+      animation: pulse 1s infinite;
+    }
+
+    .progress-step.done .step-icon {
+      background: var(--success);
+      color: white;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* ============================================================
+       STATUS MESSAGES
+       ============================================================ */
+    .status-box {
+      display: none;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      margin-top: 16px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .status-box.visible { display: block; }
+    .status-box.success { background: var(--success-bg); color: #065f46; border: 1px solid #6ee7b7; }
+    .status-box.error { background: var(--error-bg); color: #991b1b; border: 1px solid #fca5a5; }
+    .status-box.warning { background: var(--warning-bg); color: #92400e; border: 1px solid #fcd34d; }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    footer {
+      text-align: center;
+      padding: 24px 20px;
+      color: var(--text-light);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+      background: white;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 600px) {
+      header h1 { font-size: 18px; }
+      main { margin: 16px auto; padding: 0 12px; }
+      .card { padding: 20px; }
+      .btn-generate { padding: 16px; font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       HEADER
+       ============================================================ -->
+  <header>
+    <div class="header-inner">
+      <div>
+        <h1>📄 DocForge AI <span class="logo-badge">BETA</span></h1>
+        <p class="header-tagline">Transformez n'importe quel contenu en document professionnel en quelques secondes.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main>
+
+    <!-- Étape 1 — Contenu -->
+    <div class="card">
+      <h2 class="card-title"><span class="step-number">1</span> Votre contenu</h2>
+      <p class="card-subtitle">Collez du texte brut ou téléversez un fichier.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="text">📝 Texte</button>
+        <button class="tab" data-tab="file">📎 Fichier</button>
+      </div>
+
+      <!-- Onglet texte -->
+      <div class="tab-content active" id="tab-text">
+        <div class="field">
+          <label for="text-input">Collez votre contenu ici</label>
+          <textarea id="text-input" placeholder="Ex : Rapport annuel 2026. Le chiffre d'affaires a atteint 15 millions de FCFA. Notre équipe compte 12 collaborateurs..."></textarea>
+        </div>
+      </div>
+
+      <!-- Onglet fichier -->
+      <div class="tab-content" id="tab-file">
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-icon">📁</div>
+          <div class="dropzone-text">Glissez votre fichier ici</div>
+          <div class="dropzone-hint">ou cliquez pour parcourir — .txt, .docx, .pdf, .pptx, images (max 20 Mo)</div>
+        </div>
+        <input type="file" id="file-input" style="display:none" accept=".txt,.docx,.pdf,.pptx,.png,.jpg,.jpeg,.webp">
+        <div class="file-info" id="file-info">
+          <span id="file-name"></span>
+          <button class="file-remove" id="file-remove">✕</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="doc-title">Titre du document</label>
+        <input type="text" id="doc-title" placeholder="Ex : Rapport annuel 2026" value="Mon document professionnel">
+      </div>
+    </div>
+
+    <!-- Étape 2 — Template -->
+    <div class="card">
+      <h2 class="card-title"><span class="step-number">2</span> Choisissez un design</h2>
+      <p class="card-subtitle">5 thèmes professionnels, tous inclus.</p>
+
+      <div class="templates-grid" id="templates-grid">
+        <div class="template-card" data-template="consulting">
+          <div class="template-preview" style="background: linear-gradient(135deg, #1e40af, #0ea5e9)">CONSULTING</div>
+          <div class="template-name">Consulting</div>
+          <div class="template-desc">Bleu marine, sobre, corporate</div>
+        </div>
+        <div class="template-card" data-template="startup">
+          <div class="template-preview" style="background: linear-gradient(135deg, #7c3aed, #ec4899)">STARTUP</div>
+          <div class="template-name">Startup</div>
+          <div class="template-desc">Violet dynamique, moderne</div>
+        </div>
+        <div class="template-card" data-template="annual-report">
+          <div class="template-preview" style="background: linear-gradient(135deg, #b45309, #f59e0b)">RAPPORT</div>
+          <div class="template-name">Rapport annuel</div>
+          <div class="template-desc">Or et charbon, institutionnel</div>
+        </div>
+        <div class="template-card" data-template="academic">
+          <div class="template-preview" style="background: linear-gradient(135deg, #14532d, #65a30d)">ACADÉMIQUE</div>
+          <div class="template-name">Académique</div>
+          <div class="template-desc">Vert bouteille, universitaire</div>
+        </div>
+        <div class="template-card" data-template="minimal">
+          <div class="template-preview" style="background: linear-gradient(135deg, #111827, #6b7280)">MINIMAL</div>
+          <div class="template-name">Minimal</div>
+          <div class="template-desc">Noir et blanc, épuré</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Étape 3 — Options -->
+    <div class="card">
+      <h2 class="card-title"><span class="step-number">3</span> Options</h2>
+      <p class="card-subtitle">Reformulation et logo.</p>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Reformulation IA</div>
+          <div class="toggle-desc" id="reformulation-desc">OFF — texte original préservé mot pour mot (recommandé pour contrats, données)</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="reformulation-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="field" style="margin-top: 20px;">
+        <label for="logo-input">Logo (optionnel)</label>
+        <input type="file" id="logo-input" accept="image/png,image/jpeg,image/svg+xml" style="font-size: 13px;">
+      </div>
+    </div>
+
+    <!-- Bouton Générer -->
+    <div class="card">
+      <button class="btn-generate" id="btn-generate">
+        <span id="btn-icon">✨</span>
+        <span id="btn-label">Générer mon document</span>
+      </button>
+
+      <div class="progress-box" id="progress-box">
+        <div class="progress-steps" id="progress-steps"></div>
+      </div>
+
+      <div class="status-box" id="status-box"></div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Propulsé par <strong>DocForge AI</strong> — stack 100% gratuite · <a href="http://localhost:3005/health" target="_blank">Statut</a></p>
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT
+       ============================================================ -->
+  <script>
+    // Configuration
+    const ORCHESTRATOR_URL = 'http://localhost:3000/generate';
+    const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 Mo
+
+    // État
+    const state = {
+      selectedTemplate: 'consulting',
+      selectedFile: null,
+      logoDataUri: null,
+      reformulation: false,
+      isGenerating: false,
+    };
+
+    // ----- Éléments DOM -----
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => document.querySelectorAll(sel);
+
+    const textInput = $('#text-input');
+    const docTitle = $('#doc-title');
+    const templatesGrid = $('#templates-grid');
+    const reformulationToggle = $('#reformulation-toggle');
+    const reformulationDesc = $('#reformulation-desc');
+    const logoInput = $('#logo-input');
+    const btnGenerate = $('#btn-generate');
+    const btnIcon = $('#btn-icon');
+    const btnLabel = $('#btn-label');
+    const progressBox = $('#progress-box');
+    const progressSteps = $('#progress-steps');
+    const statusBox = $('#status-box');
+
+    const dropzone = $('#dropzone');
+    const fileInput = $('#file-input');
+    const fileInfo = $('#file-info');
+    const fileName = $('#file-name');
+    const fileRemove = $('#file-remove');
+
+    // ----- Onglets Texte / Fichier -----
+    $$('.tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        $$('.tab').forEach((t) => t.classList.remove('active'));
+        $$('.tab-content').forEach((c) => c.classList.remove('active'));
+        tab.classList.add('active');
+        $(`#tab-${tab.dataset.tab}`).classList.add('active');
+      });
+    });
+
+    // ----- Templates -----
+    templatesGrid.querySelectorAll('.template-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        templatesGrid.querySelectorAll('.template-card').forEach((c) => c.classList.remove('selected'));
+        card.classList.add('selected');
+        state.selectedTemplate = card.dataset.template;
+      });
+    });
+    // Sélection par défaut
+    templatesGrid.querySelector('[data-template="consulting"]').classList.add('selected');
+
+    // ----- Reformulation toggle -----
+    reformulationToggle.addEventListener('change', () => {
+      state.reformulation = reformulationToggle.checked;
+      if (state.reformulation) {
+        reformulationDesc.textContent = 'ON — texte reformulé en français professionnel par IA (recommandé pour rapports, présentations)';
+      } else {
+        reformulationDesc.textContent = 'OFF — texte original préservé mot pour mot (recommandé pour contrats, données)';
+      }
+    });
+
+    // ----- Upload fichier -----
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) handleFileSelect(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleFileSelect(e.target.files[0]);
+    });
+
+    function handleFileSelect(file) {
+      if (file.size > MAX_FILE_SIZE) {
+        showStatus('error', `Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} Mo). Limite : 20 Mo.`);
+        return;
+      }
+      state.selectedFile = file;
+      fileName.textContent = `📎 ${file.name} (${(file.size / 1024).toFixed(1)} Ko)`;
+      fileInfo.classList.add('visible');
+      // Bascule automatique sur l'onglet fichier
+      $$('.tab').forEach((t) => t.classList.remove('active'));
+      $$('.tab-content').forEach((c) => c.classList.remove('active'));
+      $('[data-tab="file"]').classList.add('active');
+      $('#tab-file').classList.add('active');
+    }
+
+    fileRemove.addEventListener('click', () => {
+      state.selectedFile = null;
+      fileInput.value = '';
+      fileInfo.classList.remove('visible');
+    });
+
+    // ----- Logo -----
+    logoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) { state.logoDataUri = null; return; }
+      if (file.size > 500 * 1024) {
+        showStatus('error', 'Logo trop volumineux (max 500 Ko)');
+        logoInput.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => { state.logoDataUri = reader.result; };
+      reader.readAsDataURL(file);
+    });
+
+    // ----- Bouton Générer -----
+    btnGenerate.addEventListener('click', async () => {
+      if (state.isGenerating) return;
+
+      // Validation
+      const hasText = textInput.value.trim().length > 0;
+      const hasFile = !!state.selectedFile;
+      if (!hasText && !hasFile) {
+        showStatus('error', 'Veuillez fournir du texte ou un fichier.');
+        return;
+      }
+
+      // Préparation
+      state.isGenerating = true;
+      btnGenerate.disabled = true;
+      btnIcon.textContent = '⏳';
+      btnLabel.textContent = 'Génération en cours…';
+      statusBox.classList.remove('visible');
+      showProgress(['M1', 'M2', 'M3', 'M4', 'M5']);
+
+      try {
+        // Construction du payload
+        let payload;
+
+        if (hasFile && !hasText) {
+          // Upload fichier : on l'envoie en multipart à M1
+          payload = await uploadFileToM1(state.selectedFile);
+        } else {
+          // Texte : payload JSON standard
+          payload = {
+            text: textInput.value.trim(),
+            reformulation: state.reformulation ? 'ON' : 'OFF',
+            options: {
+              template: state.selectedTemplate,
+              logo: state.logoDataUri || undefined,
+            },
+            meta: {
+              title: docTitle.value.trim() || 'Mon document',
+            },
+          };
+        }
+
+        // Appel à l'orchestrateur M0
+        setStepStatus(1, 'active');
+        const startTime = Date.now();
+
+       const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 min
+
+const response = await fetch(ORCHESTRATOR_URL, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload),
+  signal: controller.signal,
+});
+clearTimeout(timeoutId);
+
+        // Marquer toutes les étapes comme faites (on n'a pas de streaming)
+        const duration = Date.now() - startTime;
+        [1, 2, 3, 4, 5].forEach((n) => setStepStatus(n, 'done'));
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({ error: `HTTP ${response.status}` }));
+          throw new Error(err.error || `Erreur HTTP ${response.status}`);
+        }
+
+        // Récupérer les métadonnées des en-têtes
+        const stepsHeader = response.headers.get('X-DocForge-Steps');
+        const fallbackHeader = response.headers.get('X-DocForge-Fallback');
+        const steps = stepsHeader ? JSON.parse(stepsHeader) : [];
+        const fallbackUsed = fallbackHeader === 'true';
+
+        // Télécharger le blob
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `docforge-${Date.now()}.docx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        // Message de succès
+        const sizeKo = (blob.size / 1024).toFixed(1);
+        const durationSec = (duration / 1000).toFixed(1);
+        let msg = `✅ Document généré avec succès !\n📄 ${sizeKo} Ko · ${durationSec}s`;
+        if (fallbackUsed) {
+          msg += `\n⚠️ Certains modules ont utilisé leur mode de secours (résultat toujours valide).`;
+        }
+        showStatus('success', msg);
+      } catch (err) {
+        showStatus('error', `❌ Erreur : ${err.message}`);
+      } finally {
+        state.isGenerating = false;
+        btnGenerate.disabled = false;
+        btnIcon.textContent = '✨';
+        btnLabel.textContent = 'Générer mon document';
+      }
+    });
+
+    // ----- Upload fichier vers M1 -----
+    async function uploadFileToM1(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const m1Res = await fetch('http://localhost:3001/m1/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!m1Res.ok) {
+        const err = await m1Res.json().catch(() => ({ error: `HTTP ${m1Res.status}` }));
+        throw new Error(`Upload échoué : ${err.error}`);
+      }
+
+      const m1Data = await m1Res.json();
+
+      // On passe les blocks directement à M0
+      return {
+        blocks: m1Data.blocks,
+        reformulation: state.reformulation ? 'ON' : 'OFF',
+        options: {
+          template: state.selectedTemplate,
+          logo: state.logoDataUri || undefined,
+        },
+        meta: {
+          title: docTitle.value.trim() || file.name,
+        },
+      };
+    }
+
+    // ----- Progress UI -----
+    const STEP_LABELS = {
+      M1: 'Extraction du contenu',
+      M2: 'Analyse sémantique',
+      M3: 'Reformulation',
+      M4: 'Application du design',
+      M5: 'Génération du .docx',
+    };
+
+    function showProgress(steps) {
+      progressSteps.innerHTML = '';
+      steps.forEach((id, idx) => {
+        const div = document.createElement('div');
+        div.className = 'progress-step';
+        div.dataset.step = idx + 1;
+        div.innerHTML = `
+          <div class="step-icon">${idx + 1}</div>
+          <div>${STEP_LABELS[id] || id}</div>
+        `;
+        progressSteps.appendChild(div);
+      });
+      progressBox.classList.add('visible');
+    }
+
+    function setStepStatus(n, status) {
+      const el = progressSteps.querySelector(`[data-step="${n}"]`);
+      if (!el) return;
+      el.classList.remove('active', 'done');
+      if (status) el.classList.add(status);
+      if (status === 'done') {
+        el.querySelector('.step-icon').textContent = '✓';
+      }
+    }
+
+    // ----- Status box -----
+    function showStatus(type, message) {
+      statusBox.className = `status-box visible ${type}`;
+      statusBox.innerHTML = message.replace(/\n/g, '<br>');
+    }
+
+    // ----- Gestion de la touche Entrée (Ctrl+Entrée pour générer) -----
+    textInput.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        btnGenerate.click();
+      }
+    });
+  </script>
+</body>
+</html>

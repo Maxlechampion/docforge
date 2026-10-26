@@ -1,0 +1,25 @@
+{
+  "name": "@docforge/m1-ingestion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Upload, paste, parsing, OCR",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test tests/*.test.js",
+    "selftest": "node src/index.js --selftest"
+  },
+  "dependencies": {
+    "@fastify/cors": "8.5.0",
+    "@fastify/multipart": "^8.3.0",
+    "fastify": "^4.29.1",
+    "jszip": "^3.10.2",
+    "mammoth": "^1.13.0",
+    "opossum": "^8.5.0",
+    "tesseract.js": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

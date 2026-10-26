@@ -1,0 +1,55 @@
+# ============================================================
+# DocForge AI — Image de production (tous les modules + Caddy)
+# ============================================================
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY package*.json ./
+COPY modules/m0-orchestrator/package.json ./modules/m0-orchestrator/
+COPY modules/m1-ingestion/package.json ./modules/m1-ingestion/
+COPY modules/m2-semantic-analysis/package.json ./modules/m2-semantic-analysis/
+COPY modules/m3-reformulation/package.json ./modules/m3-reformulation/
+COPY modules/m4-design/package.json ./modules/m4-design/
+COPY modules/m5-office-generation/package.json ./modules/m5-office-generation/
+COPY shared/llm-chunking/package.json ./shared/llm-chunking/
+
+# Installer les dépendances
+RUN npm ci --omit=dev
+
+# Copier le code source
+COPY modules ./modules
+COPY shared ./shared
+COPY scripts ./scripts
+
+# ============================================================
+# Image finale : Node + Caddy
+# ============================================================
+FROM node:20-alpine
+
+# Installer Caddy
+RUN apk add --no-cache caddy
+
+WORKDIR /app
+
+# Copier node_modules et le code depuis le builder
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/modules ./modules
+COPY --from=builder /app/shared ./shared
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/package.json ./package.json
+
+# Copier la config Caddy
+COPY Caddyfile.prod ./Caddyfile
+
+# Copier le script de démarrage
+COPY start-prod.sh ./start-prod.sh
+RUN chmod +x ./start-prod.sh
+
+# Render utilise le port 10000 par défaut
+ENV PORT=10000
+
+EXPOSE 10000
+
+CMD ["./start-prod.sh"]

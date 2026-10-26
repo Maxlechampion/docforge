@@ -1,0 +1,23 @@
+{
+  "name": "@docforge/m7-auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Auth & comptes JWT",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test tests/*.test.js",
+    "selftest": "node src/index.js --selftest"
+  },
+  "dependencies": {
+    "@fastify/jwt": "10.2.5",
+    "bcryptjs": "3.0.3",
+    "fastify": "^4.29.1",
+    "opossum": "^8.1.4",
+    "pg": "8.23.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

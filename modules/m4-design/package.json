@@ -1,0 +1,21 @@
+{
+  "name": "@docforge/m4-design",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Design & templates",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test tests/*.test.js",
+    "selftest": "node src/index.js --selftest"
+  },
+  "dependencies": {
+    "@fastify/cors": "8.5.0",
+    "fastify": "^4.29.1",
+    "opossum": "^8.1.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

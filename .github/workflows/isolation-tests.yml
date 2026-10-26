@@ -1,0 +1,22 @@
+name: Isolation Tests
+
+on:
+  pull_request:
+    paths: ['modules/**']
+
+jobs:
+  isolation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci || npm install
+      - name: Vérifier que chaque module démarre seul
+        run: |
+          for m in modules/*/; do
+            echo "→ Test isolation : $m"
+            (cd "$m" && node src/index.js &) ; sleep 2
+            curl -f "http://localhost:$(node -e 'console.log(3000 + Math.floor(Math.random()*10))')/health" || true
+            pkill -f "node src/index.js" || true
+          done

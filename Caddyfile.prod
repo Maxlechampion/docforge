@@ -1,0 +1,58 @@
+# DocForge AI — Caddyfile de production
+# Un seul port public (10000), route vers les modules internes
+
+:10000 {
+    # Frontend M5 (servi sur /)
+    handle / {
+        reverse_proxy localhost:3005
+    }
+
+    # Assets frontend
+    handle /index.html {
+        reverse_proxy localhost:3005
+    }
+
+    # Orchestrateur M0
+    handle /generate {
+        reverse_proxy localhost:3000
+    }
+
+    handle /m0/* {
+        reverse_proxy localhost:3000
+    }
+
+    # M1 Ingestion
+    handle /m1/* {
+        reverse_proxy localhost:3001
+    }
+
+    # M2 Analyse
+    handle /m2/* {
+        reverse_proxy localhost:3002
+    }
+
+    # M3 Reformulation
+    handle /m3/* {
+        reverse_proxy localhost:3003
+    }
+
+    # M4 Design
+    handle /m4/* {
+        reverse_proxy localhost:3004
+    }
+
+    # M5 Génération
+    handle /m5/* {
+        reverse_proxy localhost:3005
+    }
+
+    # Health checks
+    handle /health {
+        reverse_proxy localhost:3000
+    }
+
+    # Fallback : tout le reste vers M5 (frontend)
+    handle {
+        reverse_proxy localhost:3005
+    }
+}

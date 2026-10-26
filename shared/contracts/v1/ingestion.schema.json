@@ -1,0 +1,78 @@
+{
+  "$id": "https://docforge.ai/schemas/v1/ingestion.json",
+  "type": "object",
+  "required": [
+    "version",
+    "blocks",
+    "meta"
+  ],
+  "properties": {
+    "version": {
+      "const": "1.0"
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "level",
+          "type",
+          "content"
+        ],
+        "properties": {
+          "level": {
+            "enum": [
+              "h1",
+              "h2",
+              "h3",
+              "body",
+              "caption"
+            ]
+          },
+          "type": {
+            "enum": [
+              "text",
+              "list",
+              "table",
+              "quote"
+            ]
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "source",
+        "fallback_used"
+      ],
+      "properties": {
+        "source": {
+          "enum": [
+            "txt",
+            "docx",
+            "pdf",
+            "pptx",
+            "image",
+            "paste"
+          ]
+        },
+        "filename": {
+          "type": "string"
+        },
+        "fallback_used": {
+          "type": "boolean"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

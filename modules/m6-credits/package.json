@@ -1,0 +1,21 @@
+{
+  "name": "@docforge/m6-credits",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Crédits & facturation",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test tests/*.test.js",
+    "selftest": "node src/index.js --selftest"
+  },
+  "dependencies": {
+    "fastify": "^4.29.1",
+    "opossum": "^8.1.4",
+    "pg": "8.23.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

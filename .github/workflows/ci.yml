@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - m1-ingestion
+          - m2-semantic-analysis
+          - m3-reformulation
+          - m4-design
+          - m5-office-generation
+          - m6-credits
+          - m7-auth
+          - m8-payment
+          - m9-monitoring
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci || npm install
+      - name: Tests ${{ matrix.module }}
+        run: node --test modules/${{ matrix.module }}/tests/*.test.js

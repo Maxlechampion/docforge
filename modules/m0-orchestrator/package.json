@@ -1,0 +1,22 @@
+{
+  "name": "@docforge/m0-orchestrator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Orchestrateur M1→M2→M3→M4→M5, endpoint unique POST /generate",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node src/index.js --test",
+    "selftest": "node src/index.js --selftest"
+  },
+  "dependencies": {
+    "@fastify/cors": "8.5.0",
+    "@fastify/multipart": "^8.3.0",
+    "dotenv": "18.0.8",
+    "fastify": "^4.29.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

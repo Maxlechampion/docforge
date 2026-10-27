@@ -84,6 +84,37 @@ function cleanRawText(text) {
   if (!text) return '';
   let cleaned = String(text);
 
+  // ═══════════════════════════════════════════════════════
+  // Filtrer les artefacts de conversation (ChatGPT, Claude…)
+  // ═══════════════════════════════════════════════════════
+  const artifactPatterns = [
+    /^Éléments mémorisés mis à jour\s*$/gim,
+    /^ChatGPT a dit\s*:?\s*$/gim,
+    /^Vous avez dit\s*:?\s*$/gim,
+    /^Please write in French language\.?\s*$/gim,
+    /^Tu es un expert dans.*$/gim,
+    /^Peut-on commencer\?.*$/gim,
+    /^N'hésite pas à commencer.*$/gim,
+    /^D'accord, commençons.*$/gim,
+    /^Souhaites-tu.*\?\s*$/gim,
+    /^Préfères-tu.*\?\s*$/gim,
+    /^Que penses-tu.*\?\s*$/gim,
+    /^Veux-tu que je.*\?\s*$/gim,
+  ];
+  for (const pattern of artifactPatterns) {
+    cleaned = cleaned.replace(pattern, '');
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // Filtrer les caractères de contrôle Unicode (U+0080–U+009F)
+  // ═══════════════════════════════════════════════════════
+  cleaned = cleaned.replace(/[\u0080-\u009F]/g, '');
+
+  // Filtrer les séquences de caractères bizarres (> 3 non-ASCII consécutifs)
+  // MAIS garder les accents français (À-ÿ = U+00C0–U+00FF)
+  cleaned = cleaned.replace(/[^\x00-\x7F\u00C0-\u017F\s]{3,}/g, '');
+
+
   // 1. Supprimer les balises HTML (<code>, <span>, <div>, etc.)
   cleaned = cleaned.replace(/<[^>]+>/g, '');
 
@@ -155,50 +186,173 @@ function cleanRawText(text) {
   return cleaned;
 }
 
+/**
+ * Convertit du texte brut en blocs structurés.
+ * Détecte la hiérarchie SANS nécessiter de Markdown.
+ */
 function textToBlocks(text, warnings = []) {
   const blocks = [];
-    text = cleanRawText(text);
+  text = cleanRawText(text);
   const lines = String(text).replace(/\r\n/g, '\n').split('\n');
-  let buffer = [];
 
+  const patterns = {
+    mdH1: /^#\s+(.+)$/,
+    mdH2: /^##\s+(.+)$/,
+    mdH3: /^###\s+(.+)$/,
+    h1Numbered: /^\d+\.\s+([A-ZÀ-Ý][A-ZÀ-Ý\s,'()\-:]{3,})$/,
+    h2Numbered: /^\d+\.\d+\.?\s+(.+)$/,
+    h3Numbered: /^\d+\.\d+\.\d+\.?\s+(.+)$/,
+    bullet: /^[-*•▪◦‣⁃]\s+(.+)$/,
+    numberedList: /^\d+[.)]\s+(.+)$/,
+    quote: /^[«"](.+)["»]$/,
+    tableRow: /^\|.+\|$/,
+    tableSep: /^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$/,
+  };
+
+  const isLikelyH1 = (line) => {
+    if (line.length < 3 || line.length > 120) return false;
+    const letters = line.replace(/[^A-ZÀ-Ý]/g, "");
+    if (letters.length < 4) return false;
+    const totalLetters = line.replace(/[^A-Za-zÀ-Ý]/g, "").length;
+    if (totalLetters === 0) return false;
+    const upperRatio = letters.length / totalLetters;
+    if (upperRatio < 0.85) return false;
+    if (/[.!?;]$/.test(line) && !/:$/.test(line)) return false;
+    return true;
+  };
+
+  const isLikelyH2 = (line) => {
+    if (line.length < 3 || line.length > 80) return false;
+    const words = line.split(/\s+/);
+    if (words.length < 1 || words.length > 12) return false;
+    const titleCaseCount = words.filter((w) => /^[A-ZÀ-Ý]/.test(w)).length;
+    if (titleCaseCount < words.length * 0.5) return false;
+    if (/[.!?;]$/.test(line)) return false;
+    return true;
+  };
+
+  const isLikelyH3 = (line) => {
+    if (line.length < 3 || line.length > 60) return false;
+    if (!/^[A-ZÀ-Ý]/.test(line)) return false;
+    if (/[.!?;]$/.test(line)) return false;
+    const upperLetters = line.replace(/[^A-ZÀ-Ý]/g, "").length;
+    const totalLetters = line.replace(/[^A-Za-zÀ-Ý]/g, "").length;
+    if (totalLetters === 0) return false;
+    if (upperLetters / totalLetters > 0.85) return false;
+    return true;
+  };
+
+  let buffer = [];
   const flush = () => {
     const content = buffer.join(' ').trim();
     if (content) blocks.push({ level: 'body', type: 'text', content });
     buffer = [];
   };
 
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (!line) { flush(); continue; }
+  let tableBuffer = [];
+  const flushTable = () => {
+    if (tableBuffer.length === 0) return;
+    const rows = tableBuffer
+      .filter((l) => !patterns.tableSep.test(l))
+      .map((l) => l.replace(/^\||\|$/g, '').split('|').map((c) => c.trim()));
+    if (rows.length > 0) {
+      blocks.push({ level: 'body', type: 'table', content: '', rows });
+    }
+    tableBuffer = [];
+  };
 
-    if (/^#\s+/.test(line)) {
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i];
+    const line = raw.trim();
+
+    if (!line) {
       flush();
-      blocks.push({ level: 'h1', type: 'text', content: line.replace(/^#\s+/, '') });
-    } else if (/^##\s+/.test(line)) {
+      flushTable();
+      continue;
+    }
+
+    if (patterns.tableRow.test(line) || patterns.tableSep.test(line)) {
       flush();
-      blocks.push({ level: 'h2', type: 'text', content: line.replace(/^##\s+/, '') });
-    } else if (/^###\s+/.test(line)) {
+      tableBuffer.push(line);
+      continue;
+    } else if (tableBuffer.length > 0) {
+      flushTable();
+    }
+
+    let m;
+    if ((m = patterns.mdH3.exec(line))) { flush(); blocks.push({ level: 'h3', type: 'text', content: m[1].trim() }); continue; }
+    if ((m = patterns.mdH2.exec(line))) { flush(); blocks.push({ level: 'h2', type: 'text', content: m[1].trim() }); continue; }
+    if ((m = patterns.mdH1.exec(line))) { flush(); blocks.push({ level: 'h1', type: 'text', content: m[1].trim() }); continue; }
+
+    if ((m = patterns.h3Numbered.exec(line))) {
       flush();
-      blocks.push({ level: 'h3', type: 'text', content: line.replace(/^###\s+/, '') });
-    } else if (/^[-*]\s+/.test(line)) {
+      blocks.push({ level: 'h3', type: 'text', content: line.trim() });
+      continue;
+    }
+
+    if ((m = patterns.h2Numbered.exec(line))) {
       flush();
-      blocks.push({ level: 'body', type: 'list', content: line.replace(/^[-*]\s+/, '') });
-    } else if (/^\d+\.\s+/.test(line)) {
+      blocks.push({ level: 'h2', type: 'text', content: line.trim() });
+      continue;
+    }
+
+    if ((m = patterns.h1Numbered.exec(line))) {
+      flush();
+      blocks.push({ level: 'h1', type: 'text', content: line.trim() });
+      continue;
+    }
+
+    if ((m = patterns.quote.exec(line))) {
+      flush();
+      blocks.push({ level: 'body', type: 'quote', content: m[1].trim() });
+      continue;
+    }
+
+    if ((m = patterns.bullet.exec(line))) {
+      flush();
+      blocks.push({ level: 'body', type: 'list', content: m[1].trim() });
+      continue;
+    }
+
+    if ((m = patterns.numberedList.exec(line)) && !/^\d+\.\s+[A-ZÀ-Ý][A-ZÀ-Ý\s,'()\-:]{3,}$/.test(line)) {
       flush();
       blocks.push({ level: 'body', type: 'list', content: line });
-    } else if (/^>\s+/.test(line)) {
-      flush();
-      blocks.push({ level: 'body', type: 'quote', content: line.replace(/^>\s+/, '') });
-    } else {
-      buffer.push(line);
+      continue;
     }
+
+    const prevEmpty = i === 0 || lines[i - 1].trim() === '';
+    const nextEmpty = i === lines.length - 1 || lines[i + 1].trim() === '';
+    const isIsolated = prevEmpty && nextEmpty;
+
+    if (isIsolated) {
+      if (isLikelyH1(line)) {
+        flush();
+        blocks.push({ level: 'h1', type: 'text', content: line });
+        continue;
+      }
+      if (isLikelyH2(line)) {
+        flush();
+        blocks.push({ level: 'h2', type: 'text', content: line });
+        continue;
+      }
+      if (isLikelyH3(line)) {
+        flush();
+        blocks.push({ level: 'h3', type: 'text', content: line });
+        continue;
+      }
+    }
+
+    buffer.push(line);
   }
+
   flush();
+  flushTable();
 
   if (blocks.length === 0 && text.trim()) {
     blocks.push({ level: 'body', type: 'text', content: text.trim() });
     warnings.push('Aucune structure détectée, contenu placé en bloc unique.');
   }
+
   return blocks;
 }
 

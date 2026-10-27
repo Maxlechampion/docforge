@@ -18,7 +18,8 @@
     "fastify": "^4.29.1",
     "opossum": "^8.1.4",
     "pdfkit": "0.20.2",
-    "pptxgenjs": "4.0.1"
+    "pptxgenjs": "4.0.1",
+    "jszip": "^3.10.1"
   },
   "engines": {
     "node": ">=20"

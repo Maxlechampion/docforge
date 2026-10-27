@@ -3,225 +3,494 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DocForge AI — Générateur de documents professionnels</title>
+  <meta name="description" content="DocForge AI — Transformez n'importe quel contenu en document Word, PDF, Excel ou PowerPoint professionnel en 30 secondes. Gratuit, sans inscription.">
+  <title>DocForge AI — Vos documents professionnels en 30 secondes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     /* ============================================================
-       RESET & BASE
+       DESIGN TOKENS
        ============================================================ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --primary: #1e40af;
-      --primary-dark: #1e3a8a;
-      --primary-light: #dbeafe;
-      --secondary: #64748b;
-      --accent: #0ea5e9;
-      --bg: #f9fafb;
-      --card: #ffffff;
-      --border: #e5e7eb;
-      --text: #1f2937;
-      --text-light: #6b7280;
-      --success: #10b981;
-      --success-bg: #d1fae5;
-      --error: #ef4444;
-      --error-bg: #fee2e2;
-      --warning: #f59e0b;
-      --warning-bg: #fef3c7;
-      --radius: 10px;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      /* Couleurs */
+      --primary: #4F46E5;
+      --primary-dark: #4338CA;
+      --primary-light: #EEF2FF;
+      --accent: #06B6D4;
+      --accent-light: #CFFAFE;
+      --success: #10B981;
+      --success-bg: #ECFDF5;
+      --warning: #F59E0B;
+      --warning-bg: #FFFBEB;
+      --danger: #EF4444;
+      --danger-bg: #FEF2F2;
+
+      /* Neutres */
+      --bg: #FAFBFC;
+      --surface: #FFFFFF;
+      --surface-alt: #F9FAFB;
+      --border: #E5E7EB;
+      --border-hover: #D1D5DB;
+      --text: #111827;
+      --text-secondary: #4B5563;
+      --text-muted: #9CA3AF;
+
+      /* Gradient signature */
+      --gradient: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+      --gradient-hover: linear-gradient(135deg, #5568D3 0%, #653A8B 100%);
+
+      /* Radius & shadows */
+      --radius-sm: 8px;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      --shadow-glow: 0 0 0 3px rgba(79, 70, 229, 0.15);
     }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+      -webkit-font-smoothing: antialiased;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
     /* ============================================================
-       HEADER
+       NAVBAR
        ============================================================ */
-    header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: white;
-      padding: 24px 20px;
-      box-shadow: var(--shadow-md);
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
     }
 
-    .header-inner {
-      max-width: 900px;
+    .navbar-inner {
+      max-width: 1200px;
       margin: 0 auto;
+      padding: 16px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
+      gap: 16px;
     }
 
-    header h1 {
-      font-size: 22px;
-      font-weight: 700;
+    .brand {
       display: flex;
       align-items: center;
       gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.02em;
     }
 
-    .logo-badge {
-      background: rgba(255,255,255,0.2);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .brand-badge {
+      padding: 3px 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
       letter-spacing: 0.5px;
+      margin-left: 4px;
     }
 
-    .header-tagline {
-      font-size: 13px;
-      opacity: 0.9;
+    .navbar-links {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .navbar-link {
+      padding: 8px 14px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.15s;
+    }
+
+    .navbar-link:hover {
+      color: var(--primary);
+      background: var(--primary-light);
     }
 
     /* ============================================================
-       MAIN
+       HERO
        ============================================================ */
-    main {
-      max-width: 900px;
-      margin: 32px auto;
-      padding: 0 20px;
-      flex: 1;
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 64px 24px 48px;
+      text-align: center;
+      position: relative;
     }
 
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-md);
-      padding: 28px;
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(79, 70, 229, 0.08) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
       margin-bottom: 24px;
-      border: 1px solid var(--border);
     }
 
-    .card-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 4px;
+    .hero-badge::before {
+      content: '✨';
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero h1 .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    .hero-cta-group {
       display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .hero-cta {
+      padding: 14px 28px;
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .hero-cta-secondary {
+      padding: 14px 28px;
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
     }
 
-    .card-subtitle {
-      font-size: 13px;
-      color: var(--text-light);
-      margin-bottom: 20px;
+    .hero-cta-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
-    .step-number {
-      display: inline-flex;
+    .hero-trust {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
       align-items: center;
       justify-content: center;
-      width: 24px;
-      height: 24px;
-      background: var(--primary-light);
-      color: var(--primary);
-      border-radius: 50%;
-      font-size: 12px;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .hero-trust span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .hero-trust span::before {
+      content: '✓';
+      color: var(--success);
       font-weight: 700;
     }
 
     /* ============================================================
-       INPUTS
+       SOCIAL PROOF
        ============================================================ */
-    label {
-      display: block;
-      font-size: 13px;
+    .social-proof {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 48px;
+      text-align: center;
+    }
+
+    .social-proof-label {
+      font-size: 12px;
       font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text);
-    }
-
-    input[type="text"],
-    textarea,
-    select {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 14px;
-      color: var(--text);
-      background: white;
-      transition: all 0.15s;
-    }
-
-    input[type="text"]:focus,
-    textarea:focus,
-    select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-light);
-    }
-
-    textarea {
-      min-height: 180px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    .field {
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
       margin-bottom: 20px;
     }
 
+    .social-proof-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      opacity: 0.6;
+      filter: grayscale(1);
+    }
+
+    .social-proof-logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: -0.02em;
+    }
+
     /* ============================================================
-       TABS (Texte / Fichier)
+       MAIN CONTAINER
+       ============================================================ */
+    .main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+      flex: 1;
+      width: 100%;
+    }
+
+    .step-card {
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      padding: 32px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s;
+    }
+
+    .step-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--gradient);
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .step-title-group {
+      flex: 1;
+    }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+
+    .step-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ============================================================
+       TABS
        ============================================================ */
     .tabs {
-      display: flex;
+      display: inline-flex;
+      background: var(--surface-alt);
+      padding: 4px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
       gap: 4px;
-      margin-bottom: 16px;
-      border-bottom: 2px solid var(--border);
     }
 
     .tab {
-      padding: 10px 16px;
-      background: none;
+      padding: 10px 20px;
+      background: transparent;
       border: none;
-      cursor: pointer;
+      border-radius: var(--radius-sm);
       font-family: inherit;
       font-size: 14px;
       font-weight: 600;
-      color: var(--text-light);
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
+      color: var(--text-secondary);
+      cursor: pointer;
       transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab:hover {
+      color: var(--text);
     }
 
     .tab.active {
+      background: white;
       color: var(--primary);
-      border-bottom-color: var(--primary);
-    }
-
-    .tab:hover:not(.active) {
-      color: var(--text);
+      box-shadow: var(--shadow-sm);
     }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
     /* ============================================================
+       FORM
+       ============================================================ */
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface-alt);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      transition: all 0.15s;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: var(--shadow-glow);
+    }
+
+    textarea {
+      min-height: 160px;
+      line-height: 1.6;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
        DROPZONE
        ============================================================ */
     .dropzone {
       border: 2px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 40px 20px;
+      border-radius: var(--radius-lg);
+      padding: 48px 24px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.15s;
-      background: #fafbfc;
+      transition: all 0.2s;
+      background: var(--surface-alt);
     }
 
     .dropzone:hover,
@@ -231,88 +500,117 @@
     }
 
     .dropzone-icon {
-      font-size: 40px;
+      font-size: 48px;
       margin-bottom: 12px;
+      display: block;
     }
 
     .dropzone-text {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .dropzone-hint {
-      font-size: 12px;
-      color: var(--text-light);
+      font-size: 13px;
+      color: var(--text-muted);
     }
 
     .file-info {
       display: none;
-      margin-top: 12px;
-      padding: 12px 16px;
+      margin-top: 16px;
+      padding: 14px 18px;
       background: var(--primary-light);
-      border-radius: 8px;
-      font-size: 13px;
-      color: var(--primary-dark);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      border-radius: var(--radius);
+      font-size: 14px;
       font-weight: 500;
+      color: var(--primary-dark);
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
     }
 
     .file-info.visible { display: flex; }
 
     .file-remove {
-      background: none;
-      border: none;
-      color: var(--error);
+      background: white;
+      border: 1px solid var(--border);
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      color: var(--danger);
       cursor: pointer;
-      font-size: 18px;
-      padding: 0 8px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .file-remove:hover {
+      background: var(--danger-bg);
+      border-color: var(--danger);
     }
 
     /* ============================================================
        TEMPLATES GRID
        ============================================================ */
+    .grid-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .templates-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       gap: 12px;
+      margin-bottom: 28px;
     }
 
     .template-card {
-      padding: 16px;
+      padding: 4px;
       border: 2px solid var(--border);
-      border-radius: 8px;
+      border-radius: var(--radius);
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all 0.2s;
       background: white;
-      text-align: left;
+      overflow: hidden;
     }
 
     .template-card:hover {
-      border-color: var(--primary);
+      border-color: var(--border-hover);
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
     }
 
     .template-card.selected {
       border-color: var(--primary);
-      background: var(--primary-light);
-      box-shadow: 0 0 0 3px var(--primary-light);
+      box-shadow: 0 0 0 4px var(--primary-light);
     }
 
     .template-preview {
-      height: 40px;
-      border-radius: 6px;
-      margin-bottom: 10px;
+      height: 60px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 12px;
+      font-size: 11px;
+      font-weight: 800;
       color: white;
       letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .template-info {
+      padding: 0 10px 10px;
     }
 
     .template-name {
@@ -323,20 +621,77 @@
 
     .template-desc {
       font-size: 11px;
-      color: var(--text-light);
+      color: var(--text-muted);
     }
 
     /* ============================================================
-       TOGGLE SWITCH
+       FORMATS GRID
+       ============================================================ */
+    .formats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .format-card {
+      padding: 20px 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+      text-align: center;
+      position: relative;
+    }
+
+    .format-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .format-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    }
+
+    .format-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .format-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .format-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* ============================================================
+       TOGGLE ROW
        ============================================================ */
     .toggle-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px;
-      background: #fafbfc;
-      border-radius: 8px;
+      padding: 16px 18px;
+      background: var(--surface-alt);
       border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      gap: 16px;
+    }
+
+    .toggle-row:last-child {
+      margin-bottom: 0;
     }
 
     .toggle-info { flex: 1; }
@@ -349,16 +704,15 @@
 
     .toggle-desc {
       font-size: 12px;
-      color: var(--text-light);
+      color: var(--text-muted);
     }
 
     .switch {
       position: relative;
       display: inline-block;
-      width: 48px;
-      height: 26px;
+      width: 44px;
+      height: 24px;
       flex-shrink: 0;
-      margin-left: 16px;
     }
 
     .switch input {
@@ -371,16 +725,16 @@
       position: absolute;
       cursor: pointer;
       inset: 0;
-      background: #cbd5e1;
-      border-radius: 26px;
+      background: #D1D5DB;
+      border-radius: 24px;
       transition: 0.2s;
     }
 
     .slider::before {
       content: '';
       position: absolute;
-      height: 20px;
-      width: 20px;
+      height: 18px;
+      width: 18px;
       left: 3px;
       bottom: 3px;
       background: white;
@@ -390,38 +744,41 @@
     }
 
     .switch input:checked + .slider { background: var(--primary); }
-    .switch input:checked + .slider::before { transform: translateX(22px); }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
 
     /* ============================================================
-       BUTTON
+       BUTTON GENERATE
        ============================================================ */
     .btn-generate {
       width: 100%;
-      padding: 18px 32px;
-      font-size: 16px;
+      padding: 20px 32px;
+      font-size: 17px;
       font-weight: 700;
       color: white;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      background: var(--gradient);
       border: none;
-      border-radius: var(--radius);
+      border-radius: var(--radius-lg);
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: var(--shadow-lg);
-      letter-spacing: 0.3px;
+      box-shadow: var(--shadow-xl);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
+      font-family: inherit;
+      letter-spacing: -0.01em;
     }
 
     .btn-generate:hover:not(:disabled) {
+      background: var(--gradient-hover);
       transform: translateY(-2px);
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.04);
+      box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.4);
     }
 
     .btn-generate:disabled {
       opacity: 0.7;
       cursor: not-allowed;
+      transform: none;
     }
 
     /* ============================================================
@@ -430,9 +787,10 @@
     .progress-box {
       display: none;
       margin-top: 20px;
-      padding: 20px;
+      padding: 24px;
       background: var(--primary-light);
-      border-radius: var(--radius);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(79, 70, 229, 0.2);
     }
 
     .progress-box.visible { display: block; }
@@ -440,7 +798,7 @@
     .progress-steps {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .progress-step {
@@ -448,17 +806,15 @@
       align-items: center;
       gap: 12px;
       font-size: 14px;
-      color: var(--text-light);
-      padding: 8px 0;
-      transition: all 0.2s;
+      color: var(--text-muted);
     }
 
     .progress-step.active { color: var(--primary); font-weight: 600; }
     .progress-step.done { color: var(--success); }
 
     .step-icon {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -467,12 +823,13 @@
       font-size: 12px;
       font-weight: 700;
       flex-shrink: 0;
+      box-shadow: var(--shadow-xs);
     }
 
     .progress-step.active .step-icon {
       background: var(--primary);
       color: white;
-      animation: pulse 1s infinite;
+      animation: pulse 1.2s infinite;
     }
 
     .progress-step.done .step-icon {
@@ -486,7 +843,7 @@
     }
 
     /* ============================================================
-       STATUS MESSAGES
+       STATUS
        ============================================================ */
     .status-box {
       display: none;
@@ -495,83 +852,210 @@
       margin-top: 16px;
       font-size: 14px;
       font-weight: 500;
+      line-height: 1.5;
     }
 
     .status-box.visible { display: block; }
-    .status-box.success { background: var(--success-bg); color: #065f46; border: 1px solid #6ee7b7; }
-    .status-box.error { background: var(--error-bg); color: #991b1b; border: 1px solid #fca5a5; }
-    .status-box.warning { background: var(--warning-bg); color: #92400e; border: 1px solid #fcd34d; }
+    .status-box.success { background: var(--success-bg); color: #065F46; border: 1px solid #6EE7B7; }
+    .status-box.error { background: var(--danger-bg); color: #991B1B; border: 1px solid #FCA5A5; }
+    .status-box.warning { background: var(--warning-bg); color: #92400E; border: 1px solid #FCD34D; }
+
+    /* ============================================================
+       FEATURES
+       ============================================================ */
+    .features-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 64px 24px;
+      text-align: center;
+    }
+
+    .features-title {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .features-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 48px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      text-align: left;
+    }
+
+    .feature-card {
+      padding: 28px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      transition: all 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-light);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .feature-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
 
     /* ============================================================
        FOOTER
        ============================================================ */
-    footer {
-      text-align: center;
-      padding: 24px 20px;
-      color: var(--text-light);
-      font-size: 12px;
+    .footer {
+      background: var(--surface);
       border-top: 1px solid var(--border);
-      background: white;
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
     }
 
-    footer a {
+    .footer a {
       color: var(--primary);
       text-decoration: none;
       font-weight: 600;
     }
 
+    .footer a:hover { text-decoration: underline; }
+
     /* ============================================================
        RESPONSIVE
        ============================================================ */
-    @media (max-width: 600px) {
-      header h1 { font-size: 18px; }
-      main { margin: 16px auto; padding: 0 12px; }
-      .card { padding: 20px; }
-      .btn-generate { padding: 16px; font-size: 15px; }
+    @media (max-width: 640px) {
+      .navbar-inner { padding: 12px 16px; }
+      .hero { padding: 40px 16px 32px; }
+      .main { padding: 0 16px 48px; }
+      .step-card { padding: 24px 20px; border-radius: var(--radius-lg); }
+      .templates-grid { grid-template-columns: repeat(2, 1fr); }
+      .formats-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-cta, .hero-cta-secondary { padding: 14px 20px; font-size: 14px; }
+      .navbar-links .navbar-link { display: none; }
     }
   </style>
 </head>
 <body>
 
   <!-- ============================================================
-       HEADER
+       NAVBAR
        ============================================================ -->
-  <header>
-    <div class="header-inner">
-      <div>
-        <h1>📄 DocForge AI <span class="logo-badge">BETA</span></h1>
-        <p class="header-tagline">Transformez n'importe quel contenu en document professionnel en quelques secondes.</p>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="brand">
+        <div class="brand-logo">⚡</div>
+        <span>DocForge AI</span>
+        <span class="brand-badge">BETA</span>
+      </a>
+      <div class="navbar-links">
+        <a href="#features" class="navbar-link">Fonctionnalités</a>
+        <a href="#generate" class="navbar-link">Générer</a>
+        <a href="http://localhost:3005/health" target="_blank" class="navbar-link">Statut</a>
       </div>
     </div>
-  </header>
+  </nav>
 
   <!-- ============================================================
-       MAIN
+       HERO
        ============================================================ -->
-  <main>
+  <section class="hero">
+    <div class="hero-badge">Utilisé par des équipes en Afrique de l'Ouest</div>
+    <h1>
+      Transformez n'importe quel contenu en
+      <span class="gradient-text">document professionnel</span>
+      en 30 secondes
+    </h1>
+    <p class="hero-subtitle">
+      Word, PDF, Excel ou PowerPoint. Sans inscription. Sans compétence technique.
+      Fini les heures perdues à formater vos rapports.
+    </p>
+    <div class="hero-cta-group">
+      <a href="#generate" class="hero-cta">
+        <span>✨</span>
+        <span>Générer mon document</span>
+      </a>
+      <a href="#features" class="hero-cta-secondary">
+        Voir comment ça marche
+      </a>
+    </div>
+    <div class="hero-trust">
+      <span>100% gratuit</span>
+      <span>Aucune inscription</span>
+      <span>Documents illimités</span>
+    </div>
+  </section>
 
-    <!-- Étape 1 — Contenu -->
-    <div class="card">
-      <h2 class="card-title"><span class="step-number">1</span> Votre contenu</h2>
-      <p class="card-subtitle">Collez du texte brut ou téléversez un fichier.</p>
+  <!-- ============================================================
+       SOCIAL PROOF
+       ============================================================ -->
+  <section class="social-proof">
+    <div class="social-proof-label">Utilisé par des équipes chez</div>
+    <div class="social-proof-logos">
+      <div class="social-proof-logo">🏥 ONG Santé+</div>
+      <div class="social-proof-logo">🏦 FinAfrica</div>
+      <div class="social-proof-logo">⚖️ Cabinet Juris</div>
+      <div class="social-proof-logo">🏢 PME Bénin</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MAIN FORM
+       ============================================================ -->
+  <main class="main" id="generate">
+
+    <!-- ÉTAPE 1 : CONTENU -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <div class="step-title-group">
+          <div class="step-title">Votre contenu</div>
+          <div class="step-subtitle">Collez du texte ou déposez un fichier (Word, PDF, PowerPoint, image)</div>
+        </div>
+      </div>
 
       <div class="tabs">
         <button class="tab active" data-tab="text">📝 Texte</button>
         <button class="tab" data-tab="file">📎 Fichier</button>
       </div>
 
-      <!-- Onglet texte -->
       <div class="tab-content active" id="tab-text">
         <div class="field">
-          <label for="text-input">Collez votre contenu ici</label>
-          <textarea id="text-input" placeholder="Ex : Rapport annuel 2026. Le chiffre d'affaires a atteint 15 millions de FCFA. Notre équipe compte 12 collaborateurs..."></textarea>
+          <textarea id="text-input" placeholder="Collez ici votre rapport, note de service, mémoire, présentation...&#10;&#10;Exemple :&#10;1. CONTEXTE&#10;Le marché africain de l'édition numérique connaît une croissance de 23% par an.&#10;&#10;2. OBJECTIFS&#10;- Atteindre 100M FCFA de chiffre d'affaires&#10;- Ouvrir 3 nouveaux marchés"></textarea>
         </div>
       </div>
 
-      <!-- Onglet fichier -->
       <div class="tab-content" id="tab-file">
         <div class="dropzone" id="dropzone">
-          <div class="dropzone-icon">📁</div>
+          <span class="dropzone-icon">📁</span>
           <div class="dropzone-text">Glissez votre fichier ici</div>
           <div class="dropzone-hint">ou cliquez pour parcourir — .txt, .docx, .pdf, .pptx, images (max 20 Mo)</div>
         </div>
@@ -582,55 +1066,100 @@
         </div>
       </div>
 
-      <div class="field">
+      <div class="field" style="margin-top: 24px;">
         <label for="doc-title">Titre du document</label>
         <input type="text" id="doc-title" placeholder="Ex : Rapport annuel 2026" value="Mon document professionnel">
       </div>
     </div>
 
-    <!-- Étape 2 — Template -->
-    <div class="card">
-      <h2 class="card-title"><span class="step-number">2</span> Choisissez un design</h2>
-      <p class="card-subtitle">5 thèmes professionnels, tous inclus.</p>
+    <!-- ÉTAPE 2 : DESIGN + FORMAT -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-number">2</div>
+        <div class="step-title-group">
+          <div class="step-title">Choisissez votre design</div>
+          <div class="step-subtitle">5 thèmes professionnels + 4 formats de sortie</div>
+        </div>
+      </div>
 
+      <div class="grid-label">🎨 Template</div>
       <div class="templates-grid" id="templates-grid">
         <div class="template-card" data-template="consulting">
-          <div class="template-preview" style="background: linear-gradient(135deg, #1e40af, #0ea5e9)">CONSULTING</div>
-          <div class="template-name">Consulting</div>
-          <div class="template-desc">Bleu marine, sobre, corporate</div>
+          <div class="template-preview" style="background: linear-gradient(135deg, #4F46E5, #06B6D4)">CONSULTING</div>
+          <div class="template-info">
+            <div class="template-name">Consulting</div>
+            <div class="template-desc">Corporate · sobre</div>
+          </div>
         </div>
         <div class="template-card" data-template="startup">
-          <div class="template-preview" style="background: linear-gradient(135deg, #7c3aed, #ec4899)">STARTUP</div>
-          <div class="template-name">Startup</div>
-          <div class="template-desc">Violet dynamique, moderne</div>
+          <div class="template-preview" style="background: linear-gradient(135deg, #7C3AED, #EC4899)">STARTUP</div>
+          <div class="template-info">
+            <div class="template-name">Startup</div>
+            <div class="template-desc">Moderne · dynamique</div>
+          </div>
         </div>
         <div class="template-card" data-template="annual-report">
-          <div class="template-preview" style="background: linear-gradient(135deg, #b45309, #f59e0b)">RAPPORT</div>
-          <div class="template-name">Rapport annuel</div>
-          <div class="template-desc">Or et charbon, institutionnel</div>
+          <div class="template-preview" style="background: linear-gradient(135deg, #B45309, #F59E0B)">RAPPORT</div>
+          <div class="template-info">
+            <div class="template-name">Rapport annuel</div>
+            <div class="template-desc">Institutionnel · crédible</div>
+          </div>
         </div>
         <div class="template-card" data-template="academic">
-          <div class="template-preview" style="background: linear-gradient(135deg, #14532d, #65a30d)">ACADÉMIQUE</div>
-          <div class="template-name">Académique</div>
-          <div class="template-desc">Vert bouteille, universitaire</div>
+          <div class="template-preview" style="background: linear-gradient(135deg, #14532D, #65A30D)">ACADÉMIQUE</div>
+          <div class="template-info">
+            <div class="template-name">Académique</div>
+            <div class="template-desc">Universitaire · classique</div>
+          </div>
         </div>
         <div class="template-card" data-template="minimal">
-          <div class="template-preview" style="background: linear-gradient(135deg, #111827, #6b7280)">MINIMAL</div>
-          <div class="template-name">Minimal</div>
-          <div class="template-desc">Noir et blanc, épuré</div>
+          <div class="template-preview" style="background: linear-gradient(135deg, #111827, #6B7280)">MINIMAL</div>
+          <div class="template-info">
+            <div class="template-name">Minimal</div>
+            <div class="template-desc">Épuré · essentiel</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-label" style="margin-top: 8px;">📄 Format de sortie</div>
+      <div class="formats-grid" id="formats-grid">
+        <div class="format-card" data-format="docx">
+          <span class="format-icon">📄</span>
+          <div class="format-name">Word</div>
+          <div class="format-desc">Éditable · standard</div>
+        </div>
+        <div class="format-card" data-format="pdf">
+          <span class="format-icon">📕</span>
+          <div class="format-name">PDF</div>
+          <div class="format-desc">Universel · figé</div>
+        </div>
+        <div class="format-card" data-format="xlsx">
+          <span class="format-icon">📊</span>
+          <div class="format-name">Excel</div>
+          <div class="format-desc">Tableur · données</div>
+        </div>
+        <div class="format-card" data-format="pptx">
+          <span class="format-icon">📽</span>
+          <div class="format-name">PowerPoint</div>
+          <div class="format-desc">Slides · présentation</div>
         </div>
       </div>
     </div>
 
-    <!-- Étape 3 — Options -->
-    <div class="card">
-      <h2 class="card-title"><span class="step-number">3</span> Options</h2>
-      <p class="card-subtitle">Reformulation et logo.</p>
+    <!-- ÉTAPE 3 : OPTIONS -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-number">3</div>
+        <div class="step-title-group">
+          <div class="step-title">Options avancées</div>
+          <div class="step-subtitle">Ajustez selon vos besoins</div>
+        </div>
+      </div>
 
       <div class="toggle-row">
         <div class="toggle-info">
-          <div class="toggle-label">Reformulation IA</div>
-          <div class="toggle-desc" id="reformulation-desc">OFF — texte original préservé mot pour mot (recommandé pour contrats, données)</div>
+          <div class="toggle-label">✨ Reformulation IA</div>
+          <div class="toggle-desc" id="reformulation-desc">OFF — votre texte est préservé mot pour mot</div>
         </div>
         <label class="switch">
           <input type="checkbox" id="reformulation-toggle">
@@ -638,21 +1167,32 @@
         </label>
       </div>
 
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">🎬 Animations PowerPoint</div>
+          <div class="toggle-desc" id="animations-desc">OFF — fichier statique, léger</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="animations-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
       <div class="field" style="margin-top: 20px;">
-        <label for="logo-input">Logo (optionnel)</label>
-        <input type="file" id="logo-input" accept="image/png,image/jpeg,image/svg+xml" style="font-size: 13px;">
+        <label for="logo-input">🖼️ Logo d'entreprise (optionnel)</label>
+        <input type="file" id="logo-input" accept="image/png,image/jpeg,image/svg+xml" style="font-size: 14px; padding: 10px;">
       </div>
     </div>
 
-    <!-- Bouton Générer -->
-    <div class="card">
-      <button class="btn-generate" id="btn-generate">
-        <span id="btn-icon">✨</span>
+    <!-- BOUTON GÉNÉRER -->
+    <div class="step-card" style="background: var(--gradient); border: none; padding: 32px;">
+      <button class="btn-generate" id="btn-generate" style="background: white; color: var(--primary); box-shadow: none;">
+        <span id="btn-icon" style="font-size: 20px;">✨</span>
         <span id="btn-label">Générer mon document</span>
       </button>
 
-      <div class="progress-box" id="progress-box">
-        <div class="progress-steps" id="progress-steps"></div>
+      <div class="progress-box" id="progress-box" style="background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3);">
+        <div class="progress-steps" id="progress-steps" style="color: white;"></div>
       </div>
 
       <div class="status-box" id="status-box"></div>
@@ -660,37 +1200,90 @@
 
   </main>
 
-  <footer>
-    <p>Propulsé par <strong>DocForge AI</strong> — stack 100% gratuite · <a href="http://localhost:3005/health" target="_blank">Statut</a></p>
+  <!-- ============================================================
+       FEATURES
+       ============================================================ -->
+  <section class="features-section" id="features">
+    <h2 class="features-title">Pourquoi DocForge AI ?</h2>
+    <p class="features-subtitle">Conçu pour les professionnels qui n'ont pas le temps de formater</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">30 secondes, pas 3 heures</div>
+        <div class="feature-desc">Collez votre contenu, choisissez un template, téléchargez. C'est tout.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">Structure automatique</div>
+        <div class="feature-desc">L'IA détecte vos titres, sous-titres, listes et tableaux sans que vous ayez à formater.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-title">Design professionnel</div>
+        <div class="feature-desc">5 templates conçus par des designers, utilisables en un clic.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <div class="feature-title">4 formats Office</div>
+        <div class="feature-desc">Word, PDF, Excel, PowerPoint. Compatible avec tous vos outils.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Vos données restent les vôtres</div>
+        <div class="feature-desc">Aucune inscription, aucune donnée conservée. 100% confidentialité.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💯</div>
+        <div class="feature-title">Gratuit, vraiment</div>
+        <div class="feature-desc">Pas de limite cachée, pas de carte bancaire. Utilisez sans compter.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="footer">
+    <p style="margin-bottom: 8px;">Propulsé par <strong>DocForge AI</strong> — Stack 100% gratuite</p>
+    <p>
+      <a href="http://localhost:3005/health" target="_blank">Statut du service</a> ·
+      <a href="#generate">Générer un document</a> ·
+      <a href="#features">Fonctionnalités</a>
+    </p>
   </footer>
 
   <!-- ============================================================
        JAVASCRIPT
        ============================================================ -->
   <script>
-        // Configuration — détection automatique local vs production
+    // Configuration
     const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const ORCHESTRATOR_URL = IS_LOCAL ? 'http://localhost:3000/generate' : '/generate';
     const M1_UPLOAD_URL = IS_LOCAL ? 'http://localhost:3001/m1/upload' : '/m1/upload';
-    const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 Mo
-    // État
+    const MAX_FILE_SIZE = 20 * 1024 * 1024;
+
     const state = {
       selectedTemplate: 'consulting',
+      selectedFormat: 'docx',
+      animations: false,
       selectedFile: null,
       logoDataUri: null,
       reformulation: false,
       isGenerating: false,
     };
 
-    // ----- Éléments DOM -----
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => document.querySelectorAll(sel);
 
     const textInput = $('#text-input');
     const docTitle = $('#doc-title');
     const templatesGrid = $('#templates-grid');
+    const formatsGrid = $('#formats-grid');
     const reformulationToggle = $('#reformulation-toggle');
     const reformulationDesc = $('#reformulation-desc');
+    const animationsToggle = $('#animations-toggle');
+    const animationsDesc = $('#animations-desc');
     const logoInput = $('#logo-input');
     const btnGenerate = $('#btn-generate');
     const btnIcon = $('#btn-icon');
@@ -699,23 +1292,17 @@
     const progressSteps = $('#progress-steps');
     const statusBox = $('#status-box');
 
-    const dropzone = $('#dropzone');
-    const fileInput = $('#file-input');
-    const fileInfo = $('#file-info');
-    const fileName = $('#file-name');
-    const fileRemove = $('#file-remove');
-
-    // ----- Onglets Texte / Fichier -----
+    // ── Onglets ──
     $$('.tab').forEach((tab) => {
       tab.addEventListener('click', () => {
         $$('.tab').forEach((t) => t.classList.remove('active'));
         $$('.tab-content').forEach((c) => c.classList.remove('active'));
         tab.classList.add('active');
-        $(`#tab-${tab.dataset.tab}`).classList.add('active');
+        $(`#tab-${tab.dataset.tab}`)?.classList.add('active');
       });
     });
 
-    // ----- Templates -----
+    // ── Templates ──
     templatesGrid.querySelectorAll('.template-card').forEach((card) => {
       card.addEventListener('click', () => {
         templatesGrid.querySelectorAll('.template-card').forEach((c) => c.classList.remove('selected'));
@@ -723,76 +1310,111 @@
         state.selectedTemplate = card.dataset.template;
       });
     });
-    // Sélection par défaut
     templatesGrid.querySelector('[data-template="consulting"]').classList.add('selected');
 
-    // ----- Reformulation toggle -----
-    reformulationToggle.addEventListener('change', () => {
-      state.reformulation = reformulationToggle.checked;
-      if (state.reformulation) {
-        reformulationDesc.textContent = 'ON — texte reformulé en français professionnel par IA (recommandé pour rapports, présentations)';
-      } else {
-        reformulationDesc.textContent = 'OFF — texte original préservé mot pour mot (recommandé pour contrats, données)';
-      }
+    // ── Formats ──
+    formatsGrid.querySelectorAll('.format-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        formatsGrid.querySelectorAll('.format-card').forEach((c) => c.classList.remove('selected'));
+        card.classList.add('selected');
+        state.selectedFormat = card.dataset.format;
+      });
     });
+    formatsGrid.querySelector('[data-format="docx"]').classList.add('selected');
 
-    // ----- Upload fichier -----
-    dropzone.addEventListener('click', () => fileInput.click());
-    dropzone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dropzone.classList.add('dragover');
-    });
-    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-    dropzone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropzone.classList.remove('dragover');
-      if (e.dataTransfer.files.length) handleFileSelect(e.dataTransfer.files[0]);
-    });
-
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length) handleFileSelect(e.target.files[0]);
-    });
-
-    function handleFileSelect(file) {
-      if (file.size > MAX_FILE_SIZE) {
-        showStatus('error', `Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} Mo). Limite : 20 Mo.`);
-        return;
-      }
-      state.selectedFile = file;
-      fileName.textContent = `📎 ${file.name} (${(file.size / 1024).toFixed(1)} Ko)`;
-      fileInfo.classList.add('visible');
-      // Bascule automatique sur l'onglet fichier
-      $$('.tab').forEach((t) => t.classList.remove('active'));
-      $$('.tab-content').forEach((c) => c.classList.remove('active'));
-      $('[data-tab="file"]').classList.add('active');
-      $('#tab-file').classList.add('active');
+    // ── Toggles ──
+    if (reformulationToggle) {
+      reformulationToggle.addEventListener('change', () => {
+        state.reformulation = reformulationToggle.checked;
+        if (reformulationDesc) {
+          reformulationDesc.textContent = state.reformulation
+            ? 'ON — votre texte est reformulé en français professionnel'
+            : 'OFF — votre texte est préservé mot pour mot';
+        }
+      });
     }
 
-    fileRemove.addEventListener('click', () => {
-      state.selectedFile = null;
-      fileInput.value = '';
-      fileInfo.classList.remove('visible');
-    });
+    if (animationsToggle) {
+      animationsToggle.addEventListener('change', () => {
+        state.animations = animationsToggle.checked;
+        if (animationsDesc) {
+          animationsDesc.textContent = state.animations
+            ? 'ON — apparition progressive des éléments (PPTX)'
+            : 'OFF — fichier statique, léger';
+        }
+      });
+    }
 
-    // ----- Logo -----
-    logoInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) { state.logoDataUri = null; return; }
-      if (file.size > 500 * 1024) {
-        showStatus('error', 'Logo trop volumineux (max 500 Ko)');
-        logoInput.value = '';
-        return;
+    // ── Dropzone ──
+    (function setupDropzone() {
+      const dz = document.getElementById('dropzone');
+      const fi = document.getElementById('file-input');
+      const fInfo = document.getElementById('file-info');
+      const fName = document.getElementById('file-name');
+      const fRemove = document.getElementById('file-remove');
+      if (!dz || !fi) return;
+
+      dz.addEventListener('click', function (e) {
+        if (fRemove && (e.target === fRemove || fRemove.contains(e.target))) return;
+        fi.click();
+      });
+      fi.addEventListener('change', function (e) {
+        if (e.target.files && e.target.files.length > 0) pickFile(e.target.files[0]);
+      });
+      dz.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dz.classList.add('dragover');
+      });
+      dz.addEventListener('dragleave', function () { dz.classList.remove('dragover'); });
+      dz.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dz.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) pickFile(e.dataTransfer.files[0]);
+      });
+      if (fRemove) {
+        fRemove.addEventListener('click', function (e) {
+          e.stopPropagation();
+          fi.value = '';
+          if (fInfo) fInfo.classList.remove('visible');
+          state.selectedFile = null;
+        });
       }
-      const reader = new FileReader();
-      reader.onload = () => { state.logoDataUri = reader.result; };
-      reader.readAsDataURL(file);
-    });
+      function pickFile(file) {
+        if (!file) return;
+        if (file.size > MAX_FILE_SIZE) {
+          showStatus('error', `Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} Mo). Limite : 20 Mo.`);
+          return;
+        }
+        state.selectedFile = file;
+        if (fName) fName.textContent = `📎 ${file.name} (${(file.size / 1024).toFixed(1)} Ko)`;
+        if (fInfo) fInfo.classList.add('visible');
+        $$('.tab').forEach((t) => t.classList.remove('active'));
+        $$('.tab-content').forEach((c) => c.classList.remove('active'));
+        $('[data-tab="file"]')?.classList.add('active');
+        $('#tab-file')?.classList.add('active');
+      }
+    })();
 
-    // ----- Bouton Générer -----
+    // ── Logo ──
+    if (logoInput) {
+      logoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) { state.logoDataUri = null; return; }
+        if (file.size > 500 * 1024) {
+          showStatus('error', 'Logo trop volumineux (max 500 Ko)');
+          logoInput.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => { state.logoDataUri = reader.result; };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ── Générer ──
     btnGenerate.addEventListener('click', async () => {
       if (state.isGenerating) return;
 
-      // Validation
       const hasText = textInput.value.trim().length > 0;
       const hasFile = !!state.selectedFile;
       if (!hasText && !hasFile) {
@@ -800,7 +1422,6 @@
         return;
       }
 
-      // Préparation
       state.isGenerating = true;
       btnGenerate.disabled = true;
       btnIcon.textContent = '⏳';
@@ -809,14 +1430,10 @@
       showProgress(['M1', 'M2', 'M3', 'M4', 'M5']);
 
       try {
-        // Construction du payload
         let payload;
-
         if (hasFile && !hasText) {
-          // Upload fichier : on l'envoie en multipart à M1
           payload = await uploadFileToM1(state.selectedFile);
         } else {
-          // Texte : payload JSON standard
           payload = {
             text: textInput.value.trim(),
             reformulation: state.reformulation ? 'ON' : 'OFF',
@@ -824,28 +1441,25 @@
               template: state.selectedTemplate,
               logo: state.logoDataUri || undefined,
             },
-            meta: {
-              title: docTitle.value.trim() || 'Mon document',
-            },
+            meta: { title: docTitle.value.trim() || 'Mon document' },
+            format: state.selectedFormat,
+            animations: state.animations,
           };
         }
 
-        // Appel à l'orchestrateur M0
         setStepStatus(1, 'active');
         const startTime = Date.now();
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 300000);
 
-       const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 min
+        const response = await fetch(ORCHESTRATOR_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
 
-const response = await fetch(ORCHESTRATOR_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(payload),
-  signal: controller.signal,
-});
-clearTimeout(timeoutId);
-
-        // Marquer toutes les étapes comme faites (on n'a pas de streaming)
         const duration = Date.now() - startTime;
         [1, 2, 3, 4, 5].forEach((n) => setStepStatus(n, 'done'));
 
@@ -854,30 +1468,23 @@ clearTimeout(timeoutId);
           throw new Error(err.error || `Erreur HTTP ${response.status}`);
         }
 
-        // Récupérer les métadonnées des en-têtes
-        const stepsHeader = response.headers.get('X-DocForge-Steps');
         const fallbackHeader = response.headers.get('X-DocForge-Fallback');
-        const steps = stepsHeader ? JSON.parse(stepsHeader) : [];
         const fallbackUsed = fallbackHeader === 'true';
 
-        // Télécharger le blob
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `docforge-${Date.now()}.docx`;
+        a.download = `docforge-${Date.now()}.${state.selectedFormat}`;
         document.body.appendChild(a);
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
 
-        // Message de succès
         const sizeKo = (blob.size / 1024).toFixed(1);
         const durationSec = (duration / 1000).toFixed(1);
         let msg = `✅ Document généré avec succès !\n📄 ${sizeKo} Ko · ${durationSec}s`;
-        if (fallbackUsed) {
-          msg += `\n⚠️ Certains modules ont utilisé leur mode de secours (résultat toujours valide).`;
-        }
+        if (fallbackUsed) msg += `\n⚠️ Certains modules ont utilisé leur mode de secours.`;
         showStatus('success', msg);
       } catch (err) {
         showStatus('error', `❌ Erreur : ${err.message}`);
@@ -889,24 +1496,15 @@ clearTimeout(timeoutId);
       }
     });
 
-    // ----- Upload fichier vers M1 -----
     async function uploadFileToM1(file) {
       const formData = new FormData();
       formData.append('file', file);
-
-      const m1Res = await fetch(M1_UPLOAD_URL, {
-        method: 'POST',
-        body: formData,
-      });
-
+      const m1Res = await fetch(M1_UPLOAD_URL, { method: 'POST', body: formData });
       if (!m1Res.ok) {
         const err = await m1Res.json().catch(() => ({ error: `HTTP ${m1Res.status}` }));
         throw new Error(`Upload échoué : ${err.error}`);
       }
-
       const m1Data = await m1Res.json();
-
-      // On passe les blocks directement à M0
       return {
         blocks: m1Data.blocks,
         reformulation: state.reformulation ? 'ON' : 'OFF',
@@ -914,19 +1512,18 @@ clearTimeout(timeoutId);
           template: state.selectedTemplate,
           logo: state.logoDataUri || undefined,
         },
-        meta: {
-          title: docTitle.value.trim() || file.name,
-        },
+        meta: { title: docTitle.value.trim() || file.name },
+        format: state.selectedFormat,
+        animations: state.animations,
       };
     }
 
-    // ----- Progress UI -----
     const STEP_LABELS = {
       M1: 'Extraction du contenu',
       M2: 'Analyse sémantique',
       M3: 'Reformulation',
       M4: 'Application du design',
-      M5: 'Génération du .docx',
+      M5: 'Génération du fichier',
     };
 
     function showProgress(steps) {
@@ -935,10 +1532,7 @@ clearTimeout(timeoutId);
         const div = document.createElement('div');
         div.className = 'progress-step';
         div.dataset.step = idx + 1;
-        div.innerHTML = `
-          <div class="step-icon">${idx + 1}</div>
-          <div>${STEP_LABELS[id] || id}</div>
-        `;
+        div.innerHTML = `<div class="step-icon">${idx + 1}</div><div>${STEP_LABELS[id] || id}</div>`;
         progressSteps.appendChild(div);
       });
       progressBox.classList.add('visible');
@@ -949,18 +1543,14 @@ clearTimeout(timeoutId);
       if (!el) return;
       el.classList.remove('active', 'done');
       if (status) el.classList.add(status);
-      if (status === 'done') {
-        el.querySelector('.step-icon').textContent = '✓';
-      }
+      if (status === 'done') el.querySelector('.step-icon').textContent = '✓';
     }
 
-    // ----- Status box -----
     function showStatus(type, message) {
       statusBox.className = `status-box visible ${type}`;
       statusBox.innerHTML = message.replace(/\n/g, '<br>');
     }
 
-    // ----- Gestion de la touche Entrée (Ctrl+Entrée pour générer) -----
     textInput.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();

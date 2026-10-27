@@ -109,6 +109,32 @@ FORMAT DE SORTIE :
     { "level": "body", "type": "text", "content": "..." },
     { "level": "body", "type": "table", "content": "", "rows": [["Indicateur", "Valeur"], ["CA", "15M"]] }
   ]
+}
+
+RÈGLES ADDITIONNELLES (CRITIQUES) :
+
+7. DÉTECTION DES H2 CACHÉS :
+   - Si tu vois des lignes qui commencent par "• 1.", "• 2.", "• 3.", "1.", "2.", "3." suivi d'un titre court en gras ou en majuscules (ex: "• 3. Prévisions des persécutions", "1. Contexte historique"), tu DOIS les transformer en blocs "h2" (pas "body").
+   - Exemple : "• 3. La Persécution des Apôtres" → { "level": "h2", "type": "text", "content": "La Persécution des Apôtres" }
+
+8. RÉSUMÉ DES PARAGRAPHES LONGS :
+   - Si un bloc "body" dépasse 400 caractères, tu DOIS le résumer en gardant les 2-3 phrases essentielles (max 300 caractères).
+   - Conserve tous les chiffres, noms propres et dates.
+   - Ne perds pas le sens général.
+
+9. IGNORER LES ARTEFACTS DE CONVERSATION :
+   - Ignore complètement les lignes comme "ChatGPT a dit :", "Vous avez dit :", "Éléments mémorisés mis à jour", "Please write in French language", "Tu es un expert dans...", "Souhaites-tu que..." — NE LES INCLUS PAS dans les blocs.
+
+10. TITRES DE SLIDE CLAIRS :
+    - Un titre "h2" doit faire entre 3 et 60 caractères.
+    - Si un titre est trop long, raccourcis-le intelligemment.
+    - Exemple : "• 4. Les relations familiales et la séparation spirituelle (v.26-39)" → { "level": "h2", "type": "text", "content": "Les relations familiales et la séparation spirituelle" }
+
+FORMAT DE SORTIE (rappel) :
+{
+  "blocks": [
+    { "level": "h1" | "h2" | "h3" | "body", "type": "text" | "list" | "table" | "quote", "content": "..." }
+  ]
 }`;
 
 // ============================================================

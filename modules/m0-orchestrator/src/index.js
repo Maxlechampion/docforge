@@ -46,6 +46,39 @@ const MIME_TYPES = {
 };
 
 // ============================================================
+// VALIDATION BLOCS (schéma v1)
+// ============================================================
+const VALID_LEVELS = new Set(['h1', 'h2', 'h3', 'body', 'caption']);
+const VALID_TYPES = new Set(['text', 'list', 'table', 'quote']);
+
+function validateBlocks(blocks) {
+  if (!Array.isArray(blocks) || blocks.length === 0) {
+    return { ok: false, error: 'blocks doit être un tableau non vide' };
+  }
+  for (let i = 0; i < blocks.length; i++) {
+    const b = blocks[i];
+    if (!b || typeof b !== 'object') {
+      return { ok: false, error: `blocks[${i}] n'est pas un objet` };
+    }
+    if (!VALID_LEVELS.has(b.level)) {
+      return { ok: false, error: `blocks[${i}].level invalide : ${b.level}` };
+    }
+    if (!VALID_TYPES.has(b.type)) {
+      return { ok: false, error: `blocks[${i}].type invalide : ${b.type}` };
+    }
+    if (b.type === 'table') {
+      if (!Array.isArray(b.rows) || b.rows.length === 0) {
+        return { ok: false, error: `blocks[${i}] tableau sans rows` };
+      }
+    } else if (typeof b.content !== 'string') {
+      return { ok: false, error: `blocks[${i}].content doit être une string` };
+    }
+  }
+  return { ok: true };
+}
+
+
+// ============================================================
 // 1. CONFIG
 // ============================================================
 export const CONFIG = {

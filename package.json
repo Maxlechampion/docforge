@@ -9,14 +9,16 @@
     "shared/*"
   ],
   "scripts": {
-    "test": "node --test modules/*/tests/*.test.js",
+    "test": "node --test",
+    "test:module": "node --test modules/%npm_config_module%/tests/",
     "verify": "node scripts/verify-env.js",
     "lint": "eslint modules shared --ext .js",
     "dev": "docker compose -f infra/docker-compose.yml up -d",
     "dev:down": "docker compose -f infra/docker-compose.yml down",
     "scaffold": "node scaffold-docforge.js",
     "start": "node scripts/start-all.js",
-    "start:all": "node scripts/start-all.js --all"
+    "start:all": "node scripts/start-all.js --all",
+    "fixes": "node apply-all-fixes.mjs"
   },
   "engines": {
     "node": ">=20.20.0 <21",
@@ -28,5 +30,8 @@
   "overrides": {
     "nanoid": "5.1.6",
     "content-disposition": "0.5.4"
+  },
+  "dependencies": {
+    "fs-extra": "11.4.1"
   }
 }

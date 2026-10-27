@@ -3,26 +3,31 @@ node_modules/
 .env.local
 *.log
 dist/
+build/
 coverage/
 .DS_Store
 .idea/
 .vscode/
 tmp/
+.cache/
 *.msi
 demo.txt
 m1-ingestion.js
 package.json.bak
+
+# Fichiers binaires générés
 *.docx
 *.xlsx
 *.pptx
 *.pdf
-!demo.docx
 !demo-output.docx
+
+# Backups et archives
 *.backup-*
 *.bak
 *.broken
-*.docx
-*.pdf
-*.xlsx
-*.pptx
-!demo-output.docx
+.fix-backup-*
+tools/_archive/
+
+# .git backups
+.git.backup*

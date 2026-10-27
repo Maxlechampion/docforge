@@ -26,6 +26,7 @@ import multipart from '@fastify/multipart';
 import mammoth from 'mammoth';
 import Tesseract from 'tesseract.js';
 import JSZip from 'jszip';
+import pdfParse from 'pdf-parse';
 import { fileURLToPath } from 'node:url';
 import { extname } from 'node:path';
 
@@ -101,10 +102,7 @@ function cleanRawText(text) {
   // 4. Normaliser les espaces spéciaux
   cleaned = cleaned.replace(/[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]/g, ' ');
 
-  // 5. Supprimer TOUS les backticks (inline code et blocs)
-  cleaned = cleaned.replace(/```[\s\S]*?```/g, ''); // blocs multi-lignes
-  cleaned = cleaned.replace(/`[^`]*`/g, ''); // inline code
-  cleaned = cleaned.replace(/`/g, ''); // backticks restants
+ 
 
   // 6. Supprimer les symboles Markdown
   cleaned = cleaned.replace(/\*\*/g, '');
@@ -236,26 +234,9 @@ async function parseDocx(buffer) {
 async function parsePdf(buffer) {
   const warnings = [];
   try {
-    const raw = buffer.toString('latin1');
-    const chunks = [];
-
-    // Opérateur Tj : (texte) Tj
-    const tRegex = /\(((?:[^()\\]|\\.)*)\)\s*Tj/g;
-    let m;
-    while ((m = tRegex.exec(raw)) !== null) chunks.push(decodePdfString(m[1]));
-
-    // Opérateur TJ : [(a) -10 (b) -10 (c)] TJ
-    const tjRegex = /\[((?:[^\[\]]|\\.)*)\]\s*TJ/g;
-    while ((m = tjRegex.exec(raw)) !== null) {
-      const inner = m[1];
-      const parts = [...inner.matchAll(/\(((?:[^()\\]|\\.)*)\)/g)].map((x) =>
-        decodePdfString(x[1])
-      );
-      if (parts.length) chunks.push(parts.join(''));
-    }
-
-    const text = chunks.join(' ').replace(/\s+/g, ' ').trim();
-
+    // pdf-parse gère les PDFs avec couche texte (FlateDecode, CID fonts, etc.)
+    const data = await withTimeout(pdfParse(buffer), PARSE_TIMEOUT_MS, 'pdf');
+    const text = (data.text || '').replace(/\s+/g, ' ').trim();
     if (text.length < 10) {
       warnings.push(
         'PDF sans couche texte détectée (probablement scanné). Astuce : uploadez une image pour l\'OCR.'

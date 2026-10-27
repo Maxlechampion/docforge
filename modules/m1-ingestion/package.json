@@ -17,7 +17,8 @@
     "jszip": "^3.10.2",
     "mammoth": "^1.13.0",
     "opossum": "^8.5.0",
-    "tesseract.js": "^7.0.0"
+    "tesseract.js": "^7.0.0",
+    "pdf-parse": "^1.1.1"
   },
   "engines": {
     "node": ">=20"

@@ -527,6 +527,8 @@ export async function generateXlsx({ blocks, design, meta = {} }) {
   footerCell.border = { top: { style: 'thin', color: { argb: 'FFE5E7EB' } } };
 
   sheet.pageSetup = { orientation: 'landscape', fitToPage: true, fitToWidth: 1, fitToHeight: 0 };
+    // Freeze les 2 premières lignes (titre + date)
+  sheet.views = [{ state: 'frozen', ySplit: 2 }];
 
   const buffer = await workbook.xlsx.writeBuffer();
   return Buffer.from(buffer);
